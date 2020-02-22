@@ -228,7 +228,7 @@ func (c *Client) handleConnection(messageCh, inCh chan *irc.Message, doneCh chan
 	}
 	inCh <- &irc.Message{
 		Command: irc.USER,
-		Params:  []string{c.options.Nick, "x", "x", "Prometheus IRC exporter, https://github.com/dgl/prometheus-ircd-user-exporter"},
+		Params:  []string{c.options.Nick, "x", "x", "Prometheus IRC exporter, http://d.cx/prom-ircd-exp"},
 	}
 	inCh <- &irc.Message{
 		Command: irc.NICK,

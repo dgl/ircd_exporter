@@ -91,6 +91,17 @@ irc_up{server="remote.example.org"} 0
 irc_users{server="local.example.org"} 746
 ```
 
+## Prometheus config
+
+Just scrape this, e.g.:
+
+```yaml
+scrape_configs:
+  - job_name: 'ircd-exporter'
+    static_configs:
+      - targets: ['localhost:9678']
+```
+
 ## Alternatives
 
 * https://github.com/wobscale/prometheus-irc-exporter
