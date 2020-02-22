@@ -14,7 +14,7 @@ import (
 
 var (
 	ircOptions irc.Options
-	flagListen = flag.String("listen", ":9666", "[host]:port to serve HTTP on, for metrics collection")
+	flagListen = flag.String("listen", ":9678", "[host]:port to serve HTTP on, for metrics collection")
 )
 
 func init() {
