@@ -19,7 +19,7 @@ var (
 
 func init() {
 	irc.Flags("irc.", &ircOptions)
-	flagenv.SetFlagsFromEnv("", flag.CommandLine)
+	flagenv.SetFlagsFromEnv("PIE", flag.CommandLine)
 }
 
 func main() {

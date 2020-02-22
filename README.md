@@ -9,16 +9,21 @@ This should work with most IRC servers, but has so far only been tested on Chary
 
 ## Building
 
-$ GO111MODULE=on go install github.com/dgl/prometheus-ircd-user-exporter/cmd/prometheus-ircd-user-exporter
+```shell
+GO111MODULE=on go install github.com/dgl/prometheus-ircd-user-exporter/cmd/prometheus-ircd-user-exporter
+```
 
 This will give you a prometheus-ircd-user-exporter to run, in your Go bin directory:
 
-$ $(go env GOPATH)/bin/prometheus-ircd-user-exporter
+```shell
+$(go env GOPATH)/bin/prometheus-ircd-user-exporter
+```
 
 ## Options
 
 Server to connect to:
 
+```
   -irc.nick string
     	Nickname to use (default "promexp")
   -irc.oper string
@@ -29,14 +34,18 @@ Server to connect to:
     	Password to use when connecting to the server (optional)
   -irc.server string
     	Server to connect to, host:port (default "localhost:6667")
+```
 
 Where to listen for /metrics requests:
 
+```
   -listen string
     	[host]:port to serve HTTP on, for metrics collection (default ":9678")
+```
 
 Stats to collect:
 
+```
   -stats.ignore string
     	Servers to ignore for stats (e.g. some services servers don't support the LUSERS command).
   -stats.local-only
@@ -44,12 +53,14 @@ Stats to collect:
         record the LUSERS output from them all.
   -stats.timeout duration
     	How long to wait before for stats reply before considering a server down. (default 10s)
+```
 
-Environment variables are also supported for all flags, but useful for passwords
-in particular, e.g.: `IRC.OPER_PASSWORD`. (Many servers need operator privileges
-to see full information in /LINKS, some restrict remote commands, if you want
-the timings to be accurate you need flood controls to not be applied, etc. So
-making this an operator is recommended.)
+Environment variables are also supported for all flags (prefix with `PIE_` and
+replace `-` with `_`), but useful for passwords in particular, e.g.:
+`PIE_IRC.OPER_PASSWORD`. (Many servers need operator privileges to see full
+information in /LINKS, some restrict remote commands, if you want the timings to
+be accurate you need flood controls to not be applied, etc.
+So making this an operator is recommended.)
 
 If you don't want to make this an operator using `--stats.local-only` and
 running one per IRC server is recommended.
