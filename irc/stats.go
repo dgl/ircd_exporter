@@ -5,9 +5,10 @@ import (
 )
 
 type StatsRequest struct {
-	Local    bool
-	Timeout  time.Duration
-	response chan StatsResponse
+	Local         bool
+	Timeout       time.Duration
+	IgnoreServers []string
+	response      chan StatsResponse
 }
 
 type StatsResponse struct {

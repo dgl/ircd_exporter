@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"strings"
 	"time"
 
 	"github.com/dgl/prometheus-ircd-user-exporter/irc"
@@ -11,6 +12,7 @@ import (
 var (
 	flagStatsLocal   = flag.Bool("stats.local-only", false, "Only get stats from the local server")
 	flagStatsTimeout = flag.Duration("stats.timeout", 10*time.Second, "How long to wait before for stats reply before considering a server down.")
+	flagStatsIgnore  = flag.String("stats.ignore", "", "Servers to ignore for stats (e.g. some services servers don't support the LUSERS command).")
 )
 
 const (
@@ -67,9 +69,14 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 // Collect gets stats from IRC and returns them as Prometheus metrics. It
 // implements prometheus.Collector.
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
+	ignore := strings.Split(*flagStatsIgnore, ",")
+	if len(ignore) == 1 && ignore[0] == "" {
+		ignore = []string{}
+	}
 	res := e.client.Stats(irc.StatsRequest{
-		Local:   *flagStatsLocal,
-		Timeout: *flagStatsTimeout,
+		Local:         *flagStatsLocal,
+		Timeout:       *flagStatsTimeout,
+		IgnoreServers: ignore,
 	})
 
 	_, ok := res.Servers[e.client.Server]

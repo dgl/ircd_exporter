@@ -93,6 +93,15 @@ func (c *Client) doConnection() {
 			case irc.RPL_LINKS:
 				if inProgress {
 					server := m.Params[1]
+					skip := false
+					for _, ignore := range statsReq[0].IgnoreServers {
+						if ignore == server {
+							skip = true
+						}
+					}
+					if skip {
+						break
+					}
 					statsRes.Servers[server] = &ServerStats{}
 					s := statsRes.Servers[server]
 					s.Up = false
