@@ -52,7 +52,7 @@ Stats to collect:
         Only get stats from the local server. Default is to run /LINKS and
         record the LUSERS output from them all.
   -stats.timeout duration
-    	How long to wait before for stats reply before considering a server down. (default 10s)
+    	How long to wait before for stats reply before considering a server down. (default 9s)
 ```
 
 Environment variables are also supported for all flags (prefix with `PIE_` and

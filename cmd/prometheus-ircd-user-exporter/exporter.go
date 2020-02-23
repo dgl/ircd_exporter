@@ -11,7 +11,7 @@ import (
 
 var (
 	flagStatsLocal   = flag.Bool("stats.local-only", false, "Only get stats from the local server")
-	flagStatsTimeout = flag.Duration("stats.timeout", 10*time.Second, "How long to wait before for stats reply before considering a server down.")
+	flagStatsTimeout = flag.Duration("stats.timeout", 9*time.Second, "How long to wait before for stats reply before considering a server down.")
 	flagStatsIgnore  = flag.String("stats.ignore", "", "Servers to ignore for stats (e.g. some services servers don't support the LUSERS command).")
 )
 
