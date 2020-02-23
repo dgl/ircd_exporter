@@ -77,9 +77,9 @@ irc_channels 42
 irc_distance{server="local.example.org"} 0
 irc_distance{server="remote.example.org"} 1
 
-# HELP irc_latency Latency of the request to this server from where the exporter is running.
-# TYPE irc_latency gauge
-irc_latency{server="local.example.org"} 0.015440223
+# HELP irc_latency_seconds Latency of the request to this server from where the exporter is running.
+# TYPE irc_latency_seconds gauge
+irc_latency_seconds{server="local.example.org"} 0.015440223
 
 # HELP irc_up Was the last query of each server successful.
 # TYPE irc_up gauge

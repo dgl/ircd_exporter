@@ -31,7 +31,7 @@ var (
 		[]string{"server"}, nil,
 	)
 	latency = prometheus.NewDesc(
-		prometheus.BuildFQName(namespace, "", "latency"),
+		prometheus.BuildFQName(namespace, "", "latency_seconds"),
 		"Latency of the request to this server from where the exporter is running.",
 		[]string{"server"}, nil,
 	)
