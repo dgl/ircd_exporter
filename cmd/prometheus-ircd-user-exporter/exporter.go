@@ -20,6 +20,11 @@ const (
 )
 
 var (
+	connected = prometheus.NewDesc(
+		prometheus.BuildFQName(namespace, "", "connected"),
+		"Is the exporter connected to the server?",
+		nil, nil,
+	)
 	up = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "up"),
 		"Was the last query of each server successful.",
@@ -59,6 +64,7 @@ type Exporter struct {
 // Describe describes all the metrics ever exported by the IRC exporter. It
 // implements prometheus.Collector.
 func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
+	ch <- connected
 	ch <- up
 	ch <- distance
 	ch <- latency
@@ -79,11 +85,16 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		IgnoreServers: ignore,
 	})
 
+	ch <- prometheus.MustNewConstMetric(
+		connected, prometheus.GaugeValue, boolToFloat[e.client.Server != ""])
+
 	_, ok := res.Servers[e.client.Server]
 	if res.Timeout && !ok {
 		// Timeout, no data at all
-		ch <- prometheus.MustNewConstMetric(
-			up, prometheus.GaugeValue, 0.0, e.client.Server)
+		if e.client.Server != "" {
+			ch <- prometheus.MustNewConstMetric(
+				up, prometheus.GaugeValue, 0.0, e.client.Server)
+		}
 	} else {
 		// Global state
 		ch <- prometheus.MustNewConstMetric(

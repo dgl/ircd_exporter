@@ -179,7 +179,10 @@ func (c *Client) doConnection() {
 			// We just combine all requests, could be confusing with a high timeout...
 			// TODO: This means requests can't have different parameters.
 			statsReq = append(statsReq, req)
-			if !inProgress {
+			if !c.connected {
+				statsRes.Timeout = true
+				doneRes()
+			} else if !inProgress {
 				// Links response triggers the rest of the commands, above.
 				inCh <- &irc.Message{
 					Command: irc.LINKS,

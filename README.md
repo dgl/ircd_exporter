@@ -71,6 +71,10 @@ However `irc_distance` includes all servers (based on /LINKS output), see
 ## Metrics exported
 
 ```
+# HELP irc_connected Is the exporter connected to the server?
+# TYPE irc_connected gauge
+irc_connected 1
+
 # HELP irc_channels Number of channels created in the IRC network.
 # TYPE irc_channels gauge
 irc_channels 42
