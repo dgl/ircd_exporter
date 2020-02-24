@@ -215,7 +215,11 @@ func (c *Client) handleConnection(messageCh, inCh chan *irc.Message, doneCh chan
 
 	go func() {
 		for m := range inCh {
-			log.Print("> ", m)
+			if m.Command == irc.PASS || m.Command == irc.OPER {
+				log.Print("> ", m.Command, " hunter2")
+			} else {
+				log.Print("> ", m)
+			}
 			conn.Encode(m)
 		}
 	}()
