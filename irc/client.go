@@ -107,6 +107,8 @@ func (c *Client) doConnection() {
 					s.Up = false
 					// This assumes the server includes a distance in the /LINKS output, a
 					// common extension.
+					// TODO: We could just make /LINKS into a tree, would support ~all
+					// IRCds that way. (PRs welcome.)
 					desc := strings.Split(m.Params[3], " ")
 					distance, err := strconv.Atoi(desc[0])
 					if err == nil {

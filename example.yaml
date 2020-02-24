@@ -1,0 +1,30 @@
+groups:
+  - name: ircd-exporter
+    rules:
+      # Generate a source_server label for where each instance of the exporter
+      # is running to join against. Useful when running more than one exporter
+      # instance per network.
+      - record: irc_source_server_mapping
+        expr: |
+          min(
+            label_replace(irc_distance == 0, "source_server", "$1", "server", "(.*)")
+          ) without (server)
+      # The distance between all servers where the exporter runs.
+      - record: server:irc_distance
+        expr: |
+         irc_source_server_mapping
+           + on(instance) group_right(source_server) irc_distance != 0
+      # Number of servers directly linked to each server
+      # (where the exporter runs, can't do for the whole network)
+      - record: server:irc_servers
+        expr: |
+          irc_source_server_mapping
+            + on(instance) group_right(source_server) count(irc_distance == 1) by (instance)
+      # If there's multiple exporters then simply looking at irc_users is
+      # misleading, can be fixed by simply averaging the number seen by all
+      # exporters. (Due to alignment of collections this may produce non-integer
+      # number of users, if that bothers you use min or max, or pick a server to
+      # take readings from and use a join on irc_source_server_mapping above.)
+      - record: server:irc_users
+        expr: |
+          avg(irc_users) by (server)

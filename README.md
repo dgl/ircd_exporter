@@ -63,7 +63,10 @@ be accurate you need flood controls to not be applied, etc.
 So making this an operator is recommended.)
 
 If you don't want to make this an operator using `--stats.local-only` and
-running one per IRC server is recommended.
+running one per IRC server is recommended. Note `--stats.local-only` only
+reports the server it is directly connected to in metrics such as `irc_up`, etc.
+However `irc_distance` includes all servers (based on /LINKS output), see
+[example.yaml](example.yaml) for a way to use this metric usefully.
 
 ## Metrics exported
 
@@ -101,6 +104,8 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9678']
 ```
+
+See [example.yaml](example.yaml) for some ways to use the metrics.
 
 ## Alternatives
 
