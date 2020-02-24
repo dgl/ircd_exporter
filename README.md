@@ -117,4 +117,5 @@ See [example.yaml](example.yaml) for some ways to use the metrics.
 * https://github.com/wikimedia/operations-debs-prometheus-ircd-exporter/blob/master/prometheus-ircd-exporter
 
 These both connect when scraped, I didn't want to do that (you can use the
-blackbox exporter to test a TCP or TLS connection...).
+blackbox exporter to test a TCP or TLS connection... [see
+example](https://github.com/prometheus/blackbox_exporter/blob/bf3e7fbbec35ce1b5ffd2c7abdf3ebc9ec4bc975/blackbox.yml#L23)).
