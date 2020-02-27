@@ -1,4 +1,4 @@
-module github.com/dgl/prometheus-ircd-user-exporter
+module github.com/dgl/ircd_exporter
 
 go 1.13
 

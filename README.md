@@ -1,4 +1,4 @@
-# prometheus-ircd-user-exporter
+# ircd_exporter
 
 Export user counts and related metadata from an IRC network to Prometheus.
 
@@ -10,13 +10,13 @@ This should work with most IRC servers, but has so far only been tested on Chary
 ## Building
 
 ```shell
-GO111MODULE=on go install github.com/dgl/prometheus-ircd-user-exporter/cmd/prometheus-ircd-user-exporter
+go get -u github.com/dgl/ircd_exporter/cmd/ircd_exporter
 ```
 
-This will give you a prometheus-ircd-user-exporter to run, in your Go bin directory:
+This will give you a *ircd_exporter* to run, in your Go bin directory:
 
 ```shell
-$(go env GOPATH)/bin/prometheus-ircd-user-exporter
+$(go env GOPATH)/bin/ircd_exporter
 ```
 
 ## Options
