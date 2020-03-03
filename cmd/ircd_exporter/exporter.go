@@ -5,8 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dgl/prometheus-ircd-user-exporter/irc"
 	"github.com/prometheus/client_golang/prometheus"
+
+	"github.com/dgl/ircd_exporter/irc"
 )
 
 var (

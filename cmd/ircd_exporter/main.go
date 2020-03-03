@@ -9,7 +9,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"github.com/dgl/prometheus-ircd-user-exporter/irc"
+	"github.com/dgl/ircd_exporter/irc"
 )
 
 var (
