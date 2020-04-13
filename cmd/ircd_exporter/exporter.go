@@ -11,9 +11,10 @@ import (
 )
 
 var (
-	flagStatsLocal   = flag.Bool("stats.local-only", false, "Only get stats from the local server")
+	flagStatsLocal   = flag.Bool("stats.local-only", false, "Only get stats from the local server.")
 	flagStatsTimeout = flag.Duration("stats.timeout", 9*time.Second, "How long to wait before for stats reply before considering a server down.")
-	flagStatsIgnore  = flag.String("stats.ignore", "", "Servers to ignore for stats (e.g. some services servers don't support the LUSERS command).")
+	flagStatsIgnore  = flag.String("stats.ignore", "", "Servers to ignore for stats (comma separated, e.g. some services servers don't support the LUSERS command).")
+	flagStatsNicks   = flag.String("stats.nicks", "", "List of nicknames to check for ISON status (comma separated).")
 )
 
 const (
@@ -51,6 +52,11 @@ var (
 		"Number of channels created in the IRC network.",
 		nil, nil,
 	)
+	ison = prometheus.NewDesc(
+		prometheus.BuildFQName(namespace, "", "ison"),
+		"Whether specified nicknames are online or not.",
+		[]string{"nick"}, nil,
+	)
 
 	boolToFloat = map[bool]float64{
 		false: 0.0,
@@ -71,6 +77,7 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 	ch <- latency
 	ch <- users
 	ch <- channels
+	ch <- ison
 }
 
 // Collect gets stats from IRC and returns them as Prometheus metrics. It
@@ -80,10 +87,15 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	if len(ignore) == 1 && ignore[0] == "" {
 		ignore = []string{}
 	}
+	nicks := strings.Split(*flagStatsNicks, ",")
+	if len(nicks) == 1 && nicks[0] == "" {
+		nicks = []string{}
+	}
 	res := e.client.Stats(irc.StatsRequest{
 		Local:         *flagStatsLocal,
 		Timeout:       *flagStatsTimeout,
 		IgnoreServers: ignore,
+		Nicks:         nicks,
 	})
 
 	ch <- prometheus.MustNewConstMetric(
@@ -100,6 +112,11 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 		// Global state
 		ch <- prometheus.MustNewConstMetric(
 			channels, prometheus.GaugeValue, float64(res.Channels))
+
+		for nick, nickIson := range res.Nicks {
+			ch <- prometheus.MustNewConstMetric(
+				ison, prometheus.GaugeValue, boolToFloat[nickIson], nick)
+		}
 
 		// Per server state
 		for server, stats := range res.Servers {

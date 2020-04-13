@@ -47,12 +47,16 @@ Stats to collect:
 
 ```
   -stats.ignore string
-    	Servers to ignore for stats (e.g. some services servers don't support the LUSERS command).
+        Servers to ignore for stats (comma separated, e.g. some services servers
+        don't support the LUSERS command).
   -stats.local-only
         Only get stats from the local server. Default is to run /LINKS and
         record the LUSERS output from them all.
+  -stats.nicks
+        List of nicknames to check for ISON status (comma separated).
   -stats.timeout duration
-    	How long to wait before for stats reply before considering a server down. (default 9s)
+        How long to wait before for stats reply before considering a server
+        down. (default 9s)
 ```
 
 Environment variables are also supported for all flags (prefix with `PIE_` and
@@ -96,6 +100,11 @@ irc_up{server="remote.example.org"} 0
 # HELP irc_users Number of users on this IRC server.
 # TYPE irc_users gauge
 irc_users{server="local.example.org"} 746
+
+# HELP irc_ison Whether specified nicknames are online or not.
+# TYPE irc_ison gauge
+irc_ison{nick="fred"} 0
+irc_ison{nick="nickserv"} 1
 ```
 
 ## Prometheus config

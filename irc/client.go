@@ -58,6 +58,7 @@ func (c *Client) doConnection() {
 	statsReq := []*StatsRequest{}
 	statsRes := StatsResponse{
 		Servers: make(map[string]*ServerStats),
+		Nicks: make(map[string]bool),
 	}
 	inProgress := false
 	var timeout *time.Time
@@ -72,12 +73,16 @@ func (c *Client) doConnection() {
 		if doneCount != len(statsRes.Servers) && !statsRes.Timeout {
 			return
 		}
+		if len(statsReq) > 0 && len(statsReq[0].Nicks) > 0 && (len(statsRes.Nicks) == 0 && !statsRes.Timeout) {
+			return
+		}
 		for _, req := range statsReq {
 			req.response <- statsRes
 		}
 		statsReq = []*StatsRequest{}
 		statsRes = StatsResponse{
 			Servers: make(map[string]*ServerStats),
+			Nicks: make(map[string]bool),
 		}
 		inProgress = false
 		timeout = nil
@@ -166,6 +171,18 @@ func (c *Client) doConnection() {
 						doneRes()
 					}
 				}
+			case irc.RPL_ISON:
+				if inProgress {
+					ison := strings.Split(m.Params[1], " ")
+					on := map[string]bool{}
+					for _, nick := range ison {
+						on[strings.ToLower(nick)] = true
+					}
+					for _, nick := range statsReq[0].Nicks {
+						statsRes.Nicks[nick] = on[strings.ToLower(nick)]
+					}
+					doneRes()
+				}
 			case irc.ERR_NOSUCHSERVER:
 				if inProgress {
 					s, ok := statsRes.Servers[m.Params[1]]
@@ -186,6 +203,12 @@ func (c *Client) doConnection() {
 				// Links response triggers the rest of the commands, above.
 				inCh <- &irc.Message{
 					Command: irc.LINKS,
+				}
+				if len(req.Nicks) > 0 {
+					inCh <- &irc.Message{
+						Command: irc.ISON,
+						Params:  req.Nicks,
+					}
 				}
 				inProgress = true
 				t := time.Now().Add(req.Timeout)
