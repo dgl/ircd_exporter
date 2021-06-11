@@ -12,6 +12,7 @@ import (
 
 var (
 	flagStatsLocal   = flag.Bool("stats.local-only", false, "Only get stats from the local server.")
+	flagStatsM       = flag.Bool("stats.command-usage", false, "Report stats on command usage.")
 	flagStatsTimeout = flag.Duration("stats.timeout", 9*time.Second, "How long to wait before for stats reply before considering a server down.")
 	flagStatsIgnore  = flag.String("stats.ignore", "", "Servers to ignore for stats (comma separated, e.g. some services servers don't support the LUSERS command).")
 	flagStatsNicks   = flag.String("stats.nicks", "", "List of nicknames to check for ISON status (comma separated).")
@@ -57,6 +58,16 @@ var (
 		"Whether specified nicknames are online or not.",
 		[]string{"nick"}, nil,
 	)
+	commandCount = prometheus.NewDesc(
+		prometheus.BuildFQName(namespace, "", "command_count"),
+		"Number of times command has been used in total.",
+		[]string{"server", "type", "command"}, nil,
+	)
+	commandBytes = prometheus.NewDesc(
+		prometheus.BuildFQName(namespace, "", "command_bytes"),
+		"Bytes of data used by command.",
+		[]string{"server", "command"}, nil,
+	)
 
 	boolToFloat = map[bool]float64{
 		false: 0.0,
@@ -78,6 +89,8 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 	ch <- users
 	ch <- channels
 	ch <- ison
+	ch <- commandCount
+	ch <- commandBytes
 }
 
 // Collect gets stats from IRC and returns them as Prometheus metrics. It
@@ -93,6 +106,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	}
 	res := e.client.Stats(irc.StatsRequest{
 		Local:         *flagStatsLocal,
+		StatsM:        *flagStatsM,
 		Timeout:       *flagStatsTimeout,
 		IgnoreServers: ignore,
 		Nicks:         nicks,
@@ -136,6 +150,16 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 
 				ch <- prometheus.MustNewConstMetric(
 					latency, prometheus.GaugeValue, float64(stats.ResponseTime.Sub(stats.RequestTime))/float64(time.Second), server)
+
+				for command, cstat := range stats.Command {
+					// Turn the total reported by /stats m into just a local count, so sum(irc_command_count) will aggregate nicely.
+					ch <- prometheus.MustNewConstMetric(
+						commandCount, prometheus.GaugeValue, float64(cstat.Count-cstat.RemoteCount), server, "local", command)
+					ch <- prometheus.MustNewConstMetric(
+						commandCount, prometheus.GaugeValue, float64(cstat.RemoteCount), server, "remote", command)
+					ch <- prometheus.MustNewConstMetric(
+						commandBytes, prometheus.GaugeValue, float64(cstat.Bytes), server, command)
+				}
 			}
 		}
 	}

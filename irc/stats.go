@@ -6,6 +6,7 @@ import (
 
 type StatsRequest struct {
 	Local         bool
+	StatsM        bool
 	Timeout       time.Duration
 	IgnoreServers []string
 	Nicks         []string
@@ -23,4 +24,9 @@ type ServerStats struct {
 	Up, done                  bool
 	RequestTime, ResponseTime time.Time
 	Distance, Users           int
+	Command                   map[string]CommandStats
+}
+
+type CommandStats struct {
+	Count, Bytes, RemoteCount int
 }
