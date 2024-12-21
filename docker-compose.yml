@@ -1,0 +1,36 @@
+version: '2.4'
+
+services:
+
+  #ircd:
+  #  container_name: ircd
+  #  image: make-your-choice
+  #  # Examples:
+  #  #  * ngIRCd <https://github.com/linuxserver/docker-ngircd> 
+  #  #  * InspIRCd <https://github.com/inspircd/inspircd-docker>
+  #  # with: https://github.com/anope/anope-docker for IRC Services
+  #  #  * Ergo <https://github.com/ergochat/ergo>
+  #  restart: unless-stopped
+  #  ports:
+  #    - 6667:6667/tcp
+
+  ircd-exporter:
+    image: ghcr.io/dgl/ircd_exporter:latest
+    container_name: ircd-exporter
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:9678:9678/tcp  # Test: curl http://localhost:9678/metrics
+    command:
+      - "-irc.nick=promexp"
+      #- "-irc.oper=admin"
+      #- "-irc.oper-password="
+      #- "-irc.password="
+      - "-irc.server=ircd:6667"
+      #- "-listen=:9678"
+      - "-stats.command-usage"
+      #- "-stats.ignore="
+      - "-stats.local-only"
+      #- "-stats.nicks="
+      #- "-stats.timeout=9s"
+    #depends_on:
+    #  - ircd
