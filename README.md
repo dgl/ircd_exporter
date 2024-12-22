@@ -7,7 +7,9 @@ the server when queried by `/metrics`.
 
 This should work with most IRC servers, but has so far only been tested on Charybdis.
 
-## Building
+## Using
+
+### Manual build
 
 ```shell
 go get -u github.com/dgl/ircd_exporter/cmd/ircd_exporter
@@ -17,6 +19,15 @@ This will give you a *ircd_exporter* to run, in your Go bin directory:
 
 ```shell
 $(go env GOPATH)/bin/ircd_exporter
+```
+
+### Docker
+
+There is a [docker image](https://github.com/dgl/ircd_exporter/pkgs/container/ircd_exporter).
+You can use this with the example [docker-compose.yml](docker-compose.yml) or run it directly with Docker:
+
+```cli
+docker run --restart=unless-stopped -p 9678:9678 -e PIE_IRC.SERVER=irc.example.com:6667 ghcr.io/dgl/ircd_exporter
 ```
 
 ## Options
