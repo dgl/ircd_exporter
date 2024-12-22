@@ -12,7 +12,7 @@ This should work with most IRC servers, but has so far only been tested on Chary
 ### Manual build
 
 ```shell
-go get -u github.com/dgl/ircd_exporter/cmd/ircd_exporter
+go install github.com/dgl/ircd_exporter/cmd/ircd_exporter@latest
 ```
 
 This will give you a *ircd_exporter* to run, in your Go bin directory:
