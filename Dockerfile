@@ -36,7 +36,8 @@ LABEL org.opencontainers.image.title="ircd_exporter" \
       org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.source="https://github.com/dgl/ircd_exporter"
 
-COPY --from=builder --chown=65534:65534 /go/bin/ircd_exporter /usr/local/bin/ircd_exporter
+COPY --from=builder /go/bin/ircd_exporter /usr/local/bin/ircd_exporter
+COPY --from=builder /go/src/ircd_exporter/LICENSE /LICENSE
 
 # user: nobody
 USER 65534
