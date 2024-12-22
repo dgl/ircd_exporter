@@ -1,0 +1,7 @@
+.git
+.github
+.dockerignore
+.gitignore
+Dockerfile
+example.yaml
+README.md
